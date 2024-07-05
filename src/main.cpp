@@ -19,23 +19,23 @@ int main() {
     winLineTexture.loadFromFile("resources/winLine.png");
     winLine.setTexture(&winLineTexture);
 
-    // SoundBuffer finalCrossZero; Sound winCrossZero(finalCrossZero);
-    // SoundBuffer finalDraw; Sound drawCrossZero(finalDraw);
-    // Music mainMusic;
-    // mainMusic.openFromFile("resources/mainMusic.ogg");
-    // mainMusic.setLoop(true); mainMusic.setVolume(TOTAL_VOLUME / 2);
+    SoundBuffer finalCrossZero; Sound winCrossZero(finalCrossZero);
+    SoundBuffer finalDraw; Sound drawCrossZero(finalDraw);
+    Music mainMusic;
+    mainMusic.openFromFile("resources/mainMusic.wav");
+    mainMusic.setVolume(TOTAL_VOLUME); mainMusic.setLoop(true);
 
-    // winCrossZero.setVolume(TOTAL_VOLUME);
-    // drawCrossZero.setVolume(TOTAL_VOLUME);
-    // finalCrossZero.loadFromFile("resources/winning.ogg");
-    // finalDraw.loadFromFile("resources/draw.ogg");
+    winCrossZero.setVolume(TOTAL_VOLUME);
+    drawCrossZero.setVolume(TOTAL_VOLUME);
+    finalCrossZero.loadFromFile("resources/winning.ogg");
+    finalDraw.loadFromFile("resources/draw.ogg");
 
     vector<vector<enum CEIL>> field(FIELD_SIZE, vector<enum CEIL>(FIELD_SIZE));
     int whoseStep = ZERO, flagGame = STATES::GAME;
     int x = -1, y = -1, result = -1, caseWin = -1, freeSquares = FIELD_SIZE * FIELD_SIZE;
     bool isActive = true;
 
-    // mainMusic.play();
+    mainMusic.play();
     while (window.isOpen())
     {
         Vector2i mousePos = Mouse::getPosition(window);
@@ -52,7 +52,8 @@ int main() {
             }
 
             if (event.type == Event::MouseButtonReleased) {
-                if (x != -1 && y != -1 && event.mouseButton.button == Mouse::Left && flagGame == GAME && isActive) {
+                if (x != -1 && y != -1 && event.mouseButton.button == Mouse::Left && 
+                    flagGame == GAME && isActive && field[x][y] == CEIL::EMPTY) {
                     field[x][y] = (whoseStep == ZERO) ? ZERO : CROSS; freeSquares--;
                     auto check = checkWinner(field, whoseStep, flagGame, freeSquares);
                     result = check.first; caseWin = check.second;
@@ -83,12 +84,12 @@ int main() {
         window.display();
 
         if (flagGame == FINISH) {
-            // switch (result) {
-            // case WIN_CROSS: case WIN_ZERO: winCrossZero.play(); break;
-            // case DRAW: drawCrossZero.play(); break;
-            // }
+            switch (result) {
+            case WIN_CROSS: case WIN_ZERO: winCrossZero.play(); break;
+            case DRAW: drawCrossZero.play(); break;
+            }
             
-            sleep(milliseconds(5000));
+            sleep(milliseconds(3000));
             isActive = false; whoseStep = ZERO;
             freeSquares = FIELD_SIZE * FIELD_SIZE;
             result = -1; caseWin = -1; x = -1; y = -1;
